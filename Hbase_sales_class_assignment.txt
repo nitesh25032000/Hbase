@@ -1,0 +1,77 @@
+
+# open hbase shell and create a table sales1 in hbase
+1.
+create 'sales1','qtyordered','priceforeach','orderinlineno','salesdone','statusoforder','quarter_id','month','year','product_name','msrp_of_product','code_of_product','phone_number','city_name','state_name','postal_number','country_name','territory_name','customer_last_name','customer_first_name','size'
+
+#open hive and create a external table in hive and specify the serde properties to connect hive with hbase
+2.
+create external table sales1
+(
+ORDERNUMBER string,
+QUANTITYORDERED int,
+PRICEEACH float,
+ORDERLINENUMBER int,
+SALES float,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY string,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string
+)
+row format delimited
+fields terminated by ','
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES
+("hbase.columns.mapping"=":key,qtyordered:QUANTITYORDERED,priceforeach:PRICEEACH,orderinlineno:ORDERLINENUMBER,salesdone:SALES,statusoforder:STATUS,quarter_id:QTR_ID,month:MONTH_ID,year:YEAR_ID,product_name:PRODUCTLINE,msrp_of_product:MSRP,code_of_product:PRODUCTCODE,phone_number:PHONE,city_name:CITY,state_name:STATE,postal_number:POSTALCODE,country_name:COUNTRY,territory_name:TERRITORY,customer_last_name:CONTACTLASTNAME ,customer_first_name:CONTACTFIRSTNAME,size:DEALSIZE")
+TBLPROPERTIES("hbase.table.name"="sales1");
+
+# create a staging table and load the data into the staging table
+3.
+create external table sales_stg1
+(
+ORDERNUMBER string,
+QUANTITYORDERED int,
+PRICEEACH float,
+ORDERLINENUMBER int,
+SALES float,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY string,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string
+)
+row format delimited
+fields terminated by ',';
+
+insert into table sales1 select * from sales_stg1;
+
+
+#load the data into the sales1 table from the staging table
+
+4.
+insert into sales1 select * from sales_stg1;
+
+# Then open hbase and run the command to view the contents of the table
+scan 'sales1' -- then you can view all the data loaded from sales1 table from hive to hbase sales1
