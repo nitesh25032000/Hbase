@@ -1,0 +1,9 @@
+###Assignment
+sales .csv
+
+#Already create a schema in Hive 
+
+Create a schema in hive(storage handler)
+
+
+Create a column family in hbase
